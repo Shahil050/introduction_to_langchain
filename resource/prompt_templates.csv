@@ -1,0 +1,5 @@
+id,name,template,description
+1,summarizer,"Summarize the following text in three bullet points: {{text}}","Used for condensing long articles."
+2,translator,"Translate the following text into {{language}}: {{text}}","Used for multi-language support."
+3,sentiment,"Analyze the sentiment of this review and return 'Positive' or 'Negative': {{text}}","Used for customer feedback."
+4,code_refactor,"Refactor the following Python code for better readability: {{code}}","Used for developer assistance."

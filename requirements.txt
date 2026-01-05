@@ -1,0 +1,12 @@
+numpy
+matplotlib
+pandas
+ipykernel
+# sk-learn
+keras
+torch
+fastapi
+uvicorn
+langchain
+langchain-google-genai
+python-dotenv

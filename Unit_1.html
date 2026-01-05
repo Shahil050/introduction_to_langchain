@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Fundamentals for GenAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 50px 70px;
+            background: white;
+            animation: fadeIn 0.5s ease-in;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide h1 {
+            font-size: 3em;
+            color: #2d3748;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            font-size: 2.2em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            border-left: 6px solid #667eea;
+            padding-left: 20px;
+        }
+
+        .slide h3 {
+            font-size: 1.6em;
+            color: #4a5568;
+            margin: 20px 0 12px 0;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.2em;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .slide ul {
+            margin-left: 35px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-inline {
+            background: #e2e8f0;
+            color: #e53e3e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        .box {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecf5 100%);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .box h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .nav-button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 25px;
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: bold;
+            background: white;
+            padding: 10px 18px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .title-slide {
+            text-align: center;
+            justify-content: center !important;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .title-slide h1 {
+            font-size: 3.5em;
+            color: white;
+            -webkit-text-fill-color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .title-slide p {
+            font-size: 1.5em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .output-block {
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            color: #22543d;
+        }
+
+        .warning-box {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .tip-box {
+            background: #e6fffa;
+            border-left: 4px solid #319795;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 1.05em;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .keyword {
+            color: #c678dd;
+            font-weight: bold;
+        }
+
+        .string {
+            color: #98c379;
+        }
+
+        .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .function {
+            color: #61afef;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .mini-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .mini-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .section-badge {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>🐍 Python Fundamentals for GenAI</h1>
+            <p>Unit 1: Building Your Foundation</p>
+            <p style="margin-top: 30px; font-size: 1.2em;">Topics 1.2 - 1.7</p>
+        </div>
+
+        <!-- Slide 2: Overview -->
+        <div class="slide">
+            <h2>📚 Today's Journey</h2>
+            <div class="highlight" style="margin-top: 30px;">
+                <h3>What We'll Cover</h3>
+                <ul style="font-size: 1.3em; margin-top: 15px;">
+                    <li>🔤 Python Syntax & Data Types</li>
+                    <li>🔄 Control Structures & Functions</li>
+                    <li>🔢 NumPy for Numerical Operations</li>
+                    <li>📊 Pandas for Data Manipulation</li>
+                    <li>📈 Matplotlib for Visualization</li>
+                    <li>🚀 FastAPI for API Development</li>
+                </ul>
+            </div>
+            <div class="tip-box" style="margin-top: 25px;">
+                <p><strong>💡 Goal:</strong> Master the essential Python tools that power GenAI applications. These aren't just basics—they're the building blocks of every AI system you'll create!</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Python Basics -->
+        <div class="slide">
+            <span class="section-badge">1.2 Python Syntax & Data Types</span>
+            <h2>🔤 Python Basics</h2>
+            <h3>Why Python for AI?</h3>
+            <div class="two-column">
+                <div class="box">
+                    <h4>✅ Advantages</h4>
+                    <ul>
+                        <li>Simple, readable syntax</li>
+                        <li>Massive AI/ML libraries</li>
+                        <li>Large community support</li>
+                        <li>Industry standard</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>🎯 Use Cases</h4>
+                    <ul>
+                        <li>Machine Learning</li>
+                        <li>Data Analysis</li>
+                        <li>API Development</li>
+                        <li>Automation</li>
+                    </ul>
+                </div>
+            </div>
+            <h3 style="margin-top: 25px;">Basic Syntax</h3>
+            <div class="code-block"><pre><code><span class="comment"># Python is readable and clean</span>
+<span class="keyword">print</span>(<span class="string">"Hello, GenAI World!"</span>)
+
+<span class="comment"># Variables - no declaration needed</span>
+name = <span class="string">"Claude"</span>
+age = 2
+is_ai = <span class="keyword">True</span></code></pre></div>
+        </div>
+
+        <!-- Slide 4: Data Types -->
+        <div class="slide">
+            <span class="section-badge">1.2 Python Syntax & Data Types</span>
+            <h2>📦 Core Data Types</h2>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Example</th>
+                    <th>Use in GenAI</th>
+                </tr>
+                <tr>
+                    <td><strong>int</strong></td>
+                    <td><code class="code-inline">42</code></td>
+                    <td>Token counts, dimensions</td>
+                </tr>
+                <tr>
+                    <td><strong>float</strong></td>
+                    <td><code class="code-inline">3.14</code></td>
+                    <td>Probabilities, embeddings</td>
+                </tr>
+                <tr>
+                    <td><strong>str</strong></td>
+                    <td><code class="code-inline">"prompt"</code></td>
+                    <td>Text, prompts, responses</td>
+                </tr>
+                <tr>
+                    <td><strong>bool</strong></td>
+                    <td><code class="code-inline">True</code></td>
+                    <td>Flags, conditions</td>
+                </tr>
+                <tr>
+                    <td><strong>list</strong></td>
+                    <td><code class="code-inline">[1, 2, 3]</code></td>
+                    <td>Token sequences, batches</td>
+                </tr>
+                <tr>
+                    <td><strong>dict</strong></td>
+                    <td><code class="code-inline">{"key": "value"}</code></td>
+                    <td>JSON, API responses</td>
+                </tr>
+            </table>
+            <div class="code-block" style="margin-top: 20px;"><pre><code></code><span class="comment"># Examples</span>
+tokens = [<span class="string">"Hello"</span>, <span class="string">"world"</span>, <span class="string">"!"</span>]  <span class="comment"># list</span>
+response = {<span class="string">"role"</span>: <span class="string">"assistant"</span>, <span class="string">"content"</span>: <span class="string">"Hi!"</span>}  <span class="comment"># dict</span>
+temperature = 0.7  <span class="comment"># float - controls randomness in LLMs</span></code></pre></div>
+        </div>
+
+        <!-- Slide 5: String Operations -->
+        <div class="slide">
+            <span class="section-badge">1.2 Python Syntax & Data Types</span>
+            <h2>✂️ String Operations (Critical for AI!)</h2>
+            <div class="code-block"><pre><code><span class="comment"># String manipulation - essential for prompt engineering</span>
+prompt = <span class="string">"Explain AI in simple terms"</span>
+
+<span class="comment"># Common operations</span>
+<span class="keyword">print</span>(prompt.upper())        <span class="comment"># EXPLAIN AI IN SIMPLE TERMS</span>
+<span class="keyword">print</span>(prompt.lower())        <span class="comment"># explain ai in simple terms</span>
+<span class="keyword">print</span>(prompt.split())        <span class="comment"># ['Explain', 'AI', 'in', 'simple', 'terms']</span>
+<span class="keyword">print</span>(len(prompt))           <span class="comment"># 27 - character count</span>
+
+<span class="comment"># String formatting - building prompts dynamically</span>
+topic = <span class="string">"quantum computing"</span>
+prompt = <span class="function">f</span><span class="string">"Explain {topic} in simple terms"</span>
+<span class="keyword">print</span>(prompt)  <span class="comment"># Explain quantum computing in simple terms</span>
+
+<span class="comment"># Multi-line strings - for complex prompts</span>
+system_prompt = <span class="string">"""
+You are a helpful AI assistant.
+Be concise and accurate.
+"""</span></code></pre></div>
+        </div>
+
+        <!-- Slide 6: Control Structures -->
+        <div class="slide">
+            <span class="section-badge">1.3 Control Structures & Functions</span>
+            <h2>🔄 Control Flow: If-Else</h2>
+            <div class="code-block"><pre><code><span class="comment"># Decision making - essential for AI logic</span>
+temperature = 0.8
+
+<span class="keyword">if</span> temperature > 1.0:
+    <span class="keyword">print</span>(<span class="string">"Too random - outputs will be chaotic"</span>)
+<span class="keyword">elif</span> temperature > 0.7:
+    <span class="keyword">print</span>(<span class="string">"Good for creative tasks"</span>)
+<span class="keyword">elif</span> temperature > 0.3:
+    <span class="keyword">print</span>(<span class="string">"Balanced creativity and accuracy"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">"Very deterministic - good for factual tasks"</span>)
+
+<span class="comment"># Real GenAI example: filtering responses</span>
+response_length = 150
+<span class="keyword">if</span> response_length < 10:
+    <span class="keyword">print</span>(<span class="string">"Response too short, regenerate"</span>)
+<span class="keyword">elif</span> response_length > 500:
+    <span class="keyword">print</span>(<span class="string">"Response too long, truncate"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string">"Response length acceptable"</span>)</code></pre></div>
+        </div>
+
+        <!-- Slide 7: Loops -->
+        <div class="slide">
+            <span class="section-badge">1.3 Control Structures & Functions</span>
+            <h2>🔁 Loops: For & While</h2>
+            <div class="code-block"><pre><code><span class="comment"># For loop - iterate over sequences</span>
+prompts = [<span class="string">"Hello"</span>, <span class="string">"How are you?"</span>, <span class="string">"Tell me a joke"</span>]
+
+<span class="keyword">for</span> prompt <span class="keyword">in</span> prompts:
+    <span class="keyword">print</span>(<span class="function">f</span><span class="string">"Processing: {prompt}"</span>)
+    <span class="comment"># In real AI: send_to_llm(prompt)</span>
+
+<span class="comment"># Range - for numerical iterations</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(5):
+    <span class="keyword">print</span>(<span class="function">f</span><span class="string">"Batch {i+1} processing..."</span>)
+
+<span class="comment"># While loop - condition-based iteration</span>
+tokens_used = 0
+max_tokens = 1000
+
+<span class="keyword">while</span> tokens_used < max_tokens:
+    <span class="keyword">print</span>(<span class="function">f</span><span class="string">"Generating... Tokens: {tokens_used}"</span>)
+    tokens_used += 100  <span class="comment"># simulate token generation</span>
+    <span class="keyword">if</span> tokens_used >= max_tokens:
+        <span class="keyword">print</span>(<span class="string">"Token limit reached!"</span>)</code></pre></div>
+        </div>
+
+        <!-- Slide 8: Functions -->
+        <div class="slide">
+            <span class="section-badge">1.3 Control Structures & Functions</span>
+            <h2>⚙️ Functions: Reusable Code</h2>
+            <div class="code-block"><pre><code><span class="comment"># Function definition</span>
+<span class="keyword">def</span> <span class="function">create_prompt</span>(topic, style=<span class="string">"simple"</span>):
+    <span class="string">"""Creates a prompt for the LLM"""</span>
+    <span class="keyword">if</span> style == <span class="string">"simple"</span>:
+        <span class="keyword">return</span> <span class="function">f</span><span class="string">"Explain {topic} in simple terms."</span>
+    <span class="keyword">elif</span> style == <span class="string">"technical"</span>:
+        <span class="keyword">return</span> <span class="function">f</span><span class="string">"Provide a technical explanation of {topic}."</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> <span class="function">f</span><span class="string">"Discuss {topic}."</span>
+
+<span class="comment"># Function calls</span>
+prompt1 = <span class="function">create_prompt</span>(<span class="string">"neural networks"</span>)
+prompt2 = <span class="function">create_prompt</span>(<span class="string">"transformers"</span>, <span class="string">"technical"</span>)
+
+<span class="keyword">print</span>(prompt1)
+<span class="keyword">print</span>(prompt2)</code></pre></div>
+            <div class="output-block"><pre><code>Explain neural networks in simple terms.
+Provide a technical explanation of transformers.</code></pre></div>
+            <div class="tip-box">
+                <p><strong>💡 Best Practice:</strong> Functions make your code modular and reusable—critical when building complex AI pipelines!</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Lambda Functions -->
+        <div class="slide">
+            <span class="section-badge">1.3 Control Structures & Functions</span>
+            <h2>⚡ Lambda Functions: Quick & Simple</h2>
+            <div class="code-block"><pre><code><span class="comment"># Lambda = anonymous function (one-liner)</span>
+<span class="comment"># Regular function</span>
+<span class="keyword">def</span> <span class="function">count_tokens</span>(text):
+    <span class="keyword">return</span> <span class="function">len</span>(text.split())
+
+<span class="comment"># Same as lambda</span>
+count_tokens = <span class="keyword">lambda</span> text: <span class="function">len</span>(text.split())
+
+<span class="comment"># Common use: transforming data</span>
+prompts = [<span class="string">"hi"</span>, <span class="string">"how are you"</span>, <span class="string">"tell me about AI"</span>]
+token_counts = <span class="function">list</span>(<span class="function">map</span>(<span class="keyword">lambda</span> p: <span class="function">len</span>(p.split()), prompts))
+<span class="keyword">print</span>(token_counts)  <span class="comment"># [1, 3, 4]</span>
+
+<span class="comment"># Filtering data</span>
+long_prompts = <span class="function">list</span>(<span class="function">filter</span>(<span class="keyword">lambda</span> p: <span class="function">len</span>(p.split()) > 2, prompts))
+<span class="keyword">print</span>(long_prompts)  <span class="comment"># ['how are you', 'tell me about AI']</span></div>
+            <div class="highlight">
+                <p><strong>Use Case:</strong> Lambdas are perfect for data preprocessing in AI pipelines—quick transformations without cluttering your code!</p>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 10: NumPy Intro -->
+        <div class="slide">
+            <span class="section-badge">1.4 NumPy for Numerical Operations</span>
+            <h2>🔢 NumPy: The Foundation of AI Math</h2>
+            <div class="two-column">
+                <div class="box">
+                    <h4>Why NumPy?</h4>
+                    <ul>
+                        <li>Fast numerical computing</li>
+                        <li>Array operations</li>
+                        <li>Matrix math</li>
+                        <li>Foundation for AI libraries</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>AI Applications</h4>
+                    <ul>
+                        <li>Vector embeddings</li>
+                        <li>Matrix operations</li>
+                        <li>Similarity calculations</li>
+                        <li>Data preprocessing</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-block" style="margin-top: 20px;"><pre><code><span class="comment"># Installing NumPy</span>
+<span class="comment"># pip install numpy</span>
+
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Create arrays</span>
+arr = np.array([1, 2, 3, 4, 5])
+<span class="keyword">print</span>(arr)           <span class="comment"># [1 2 3 4 5]</span>
+<span class="keyword">print</span>(<span class="function">type</span>(arr))     <span class="comment"># &lt;class 'numpy.ndarray'&gt;</span>
+
+<span class="comment"># 2D array (matrix)</span>
+matrix = np.array([[1, 2, 3], [4, 5, 6]])
+<span class="keyword">print</span>(matrix.shape)  <span class="comment"># (2, 3) - 2 rows, 3 columns</span></code></pre></div>
+        </div>
+
+        <!-- Slide 11: NumPy Operations -->
+        <div class="slide">
+            <span class="section-badge">1.4 NumPy for Numerical Operations</span>
+            <h2>➗ NumPy Operations</h2>
+            <div class="code-block"><pre><code><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Basic operations</span>
+arr = np.array([1, 2, 3, 4])
+<span class="keyword">print</span>(arr * 2)       <span class="comment"># [2 4 6 8] - element-wise multiplication</span>
+<span class="keyword">print</span>(arr + 10)      <span class="comment"># [11 12 13 14] - broadcasting</span>
+<span class="keyword">print</span>(np.sum(arr))   <span class="comment"># 10</span>
+<span class="keyword">print</span>(np.mean(arr))  <span class="comment"># 2.5</span>
+
+<span class="comment"># AI Example: Cosine Similarity (for text embeddings)</span>
+embedding1 = np.array([0.5, 0.8, 0.2])
+embedding2 = np.array([0.6, 0.7, 0.3])
+
+<span class="comment"># Calculate similarity</span>
+dot_product = np.dot(embedding1, embedding2)
+norm1 = np.linalg.norm(embedding1)
+norm2 = np.linalg.norm(embedding2)
+similarity = dot_product / (norm1 * norm2)
+
+<span class="keyword">print</span>(<span class="function">f</span><span class="string">"Similarity: {similarity:.3f}"</span>)  <span class="comment"># 0.989 (very similar!)</span></div>
+            <div class="highlight">
+                <p><strong>🎯 Real World:</strong> This is exactly how RAG systems calculate which documents are most relevant to your query!</p>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 12: Pandas Intro -->
+        <div class="slide">
+            <span class="section-badge">1.5 Pandas for Data Manipulation</span>
+            <h2>📊 Pandas: Data Manipulation Powerhouse</h2>
+            <div class="code-block"><pre><code><span class="comment"># pip install pandas</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># Create DataFrame (like Excel spreadsheet)</span>
+data = {
+    <span class="string">'prompt'</span>: [<span class="string">'Explain AI'</span>, <span class="string">'Write code'</span>, <span class="string">'Summarize'</span>],
+    <span class="string">'tokens'</span>: [150, 300, 200],
+    <span class="string">'model'</span>: [<span class="string">'GPT-4'</span>, <span class="string">'GPT-4'</span>, <span class="string">'Claude'</span>]
+}
+
+df = pd.DataFrame(data)
+<span class="keyword">print</span>(df)</div>
+            <div class="output-block"><pre><code>        prompt  tokens   model
+0   Explain AI     150   GPT-4
+1   Write code     300   GPT-4
+2    Summarize     200  Claude</code></pre></div>
+            <div class="tip-box">
+                <p><strong>💡 Use Case:</strong> Track LLM usage, analyze prompt performance, manage training data!</p>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 13: Pandas Operations -->
+        <div class="slide">
+            <span class="section-badge">1.5 Pandas for Data Manipulation</span>
+            <h2>🔍 Pandas Data Operations</h2>
+            <div class="code-block"><pre><code><span class="comment"># Basic operations</span>
+<span class="keyword">print</span>(df[<span class="string">'tokens'</span>])           <span class="comment"># Select column</span>
+<span class="keyword">print</span>(df[df[<span class="string">'tokens'</span>] > 150]) <span class="comment"># Filter rows</span>
+<span class="keyword">print</span>(df[<span class="string">'tokens'</span>].mean())    <span class="comment"># 216.67 - average</span>
+
+<span class="comment"># Add new column</span>
+df[<span class="string">'cost'</span>] = df[<span class="string">'tokens'</span>] * 0.0001  <span class="comment"># Calculate cost</span>
+
+<span class="comment"># Group by model</span>
+<span class="keyword">print</span>(df.groupby(<span class="string">'model'</span>)[<span class="string">'tokens'</span>].sum())
+
+<span class="comment"># Read/Write files</span>
+df.to_csv(<span class="string">'llm_usage.csv'</span>, index=<span class="keyword">False</span>)
+df_loaded = pd.read_csv(<span class="string">'llm_usage.csv'</span>)</code></pre></div>
+        </div>
+
+        <!-- Slide 14: Matplotlib Intro -->
+        <div class="slide">
+            <span class="section-badge">1.6 Data Visualization with Matplotlib</span>
+            <h2>📈 Matplotlib: Visualize Your Data</h2>
+            <div class="two-column">
+                <div class="box">
+                    <h4>Why Visualize?</h4>
+                    <ul>
+                        <li>Understand patterns</li>
+                        <li>Debug issues</li>
+                        <li>Communicate insights</li>
+                        <li>Track model performance</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>Common Plots</h4>
+                    <ul>
+                        <li>Line charts (trends)</li>
+                        <li>Bar charts (comparisons)</li>
+                        <li>Scatter plots (relationships)</li>
+                        <li>Histograms (distributions)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-block" style="margin-top: 20px;"><pre><code><span class="comment"># pip install matplotlib</span>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Simple line plot</span>
+epochs = [1, 2, 3, 4, 5]
+loss = [0.8, 0.6, 0.4, 0.3, 0.25]
+
+plt.plot(epochs, loss, marker=<span class="string">'o'</span>)
+plt.xlabel(<span class="string">'Epoch'</span>)
+plt.ylabel(<span class="string">'Loss'</span>)
+plt.title(<span class="string">'Training Loss Over Time'</span>)
+plt.grid(<span class="keyword">True</span>)
+plt.show()</div></code></pre>
+        </div>
+
+        <!-- Slide 15: More Visualizations -->
+        <div class="slide">
+            <span class="section-badge">1.6 Data Visualization with Matplotlib</span>
+            <h2>📊 More Visualization Examples</h2>
+            <div class="code-block"><pre><code><span class="comment"># Bar chart - compare model performance</span>
+models = [<span class="string">'GPT-3.5'</span>, <span class="string">'GPT-4'</span>, <span class="string">'Claude'</span>]
+scores = [85, 92, 90]
+
+plt.bar(models, scores, color=[<span class="string">'blue'</span>, <span class="string">'green'</span>, <span class="string">'purple'</span>])
+plt.ylabel(<span class="string">'Accuracy Score'</span>)
+plt.title(<span class="string">'Model Performance Comparison'</span>)
+plt.ylim(80, 95)
+plt.show()
+
+<span class="comment"># Scatter plot - token usage vs cost</span>
+tokens = [100, 250, 500, 750, 1000]
+cost = [0.01, 0.025, 0.05, 0.075, 0.1]
+
+plt.scatter(tokens, cost, s=100, alpha=0.6)
+plt.xlabel(<span class="string">'Tokens'</span>)
+plt.ylabel(<span class="string">'Cost ($)'</span>)
+plt.title(<span class="string">'Token Usage vs Cost'</span>)
+plt.grid(<span class="keyword">True</span>, alpha=0.3)
+plt.show()</div>
+            <div class="tip-box">
+                <p><strong>💡 Pro Tip:</strong> Always visualize your training metrics! It helps you spot problems early.</p>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 16: FastAPI Intro -->
+        <div class="slide">
+            <span class="section-badge">1.7 FastAPI for API Development</span>
+            <h2>🚀 FastAPI: Build AI APIs Fast!</h2>
+            <div class="highlight">
+                <h3>What is an API?</h3>
+                <p><strong>API (Application Programming Interface)</strong> = A way for programs to talk to each other</p>
+                <p style="margin-top: 15px;">Example: When you use ChatGPT in your app, you're calling OpenAI's API</p>
+            </div>
+            <div class="two-column" style="margin-top: 20px;">
+                <div class="box">
+                    <h4>Why FastAPI?</h4>
+                    <ul>
+                        <li>Super fast performance</li>
+                        <li>Easy to learn</li>
+                        <li>Automatic documentation</li>
+                        <li>Type checking built-in</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>GenAI Use Cases</h4>
+                    <ul>
+                        <li>Expose LLM to web apps</li>
+                        <li>Build chatbot backends</li>
+                        <li>Create RAG APIs</li>
+                        <li>Model serving</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: FastAPI Basic Example -->
+        <div class="slide">
+            <span class="section-badge">1.7 FastAPI for API Development</span>
+            <h2>⚡ Your First FastAPI App</h2>
+            <div class="code-block"><pre><code><span class="comment"># pip install fastapi uvicorn</span>
+<span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI
+
+app = FastAPI()
+
+<span class="comment"># Simple endpoint</span>
+<span class="keyword">@app.get</span>(<span class="string">"/"</span>)
+<span class="keyword">def</span> <span class="function">read_root</span>():
+    <span class="keyword">return</span> {<span class="string">"message"</span>: <span class="string">"Welcome to GenAI API!"</span>}
+
+<span class="comment"># Endpoint with parameters</span>
+<span class="keyword">@app.get</span>(<span class="string">"/generate/{prompt}"</span>)
+<span class="keyword">def</span> <span class="function">generate_text</span>(prompt: str, max_tokens: int = 100):
+    <span class="comment"># In real app: call LLM here</span>
+    <span class="keyword">return</span> {
+        <span class="string">"prompt"</span>: prompt,
+        <span class="string">"max_tokens"</span>: max_tokens,
+        <span class="string">"response"</span>: <span class="function">f</span><span class="string">"Generated text for: {prompt}"</span>
+    }
+
+<span class="comment"># Run: uvicorn filename:app --reload</span></div>
+            <div class="output-block">Visit: http://127.0.0.1:8000/docs 
+Automatic interactive documentation! 🎉</div></code></pre>
+        </div>
+
+        <!-- Slide 18: FastAPI with POST -->
+        <div class="slide">
+            <span class="section-badge">1.7 FastAPI for API Development</span>
+            <h2>📮 POST Requests: Sending Data</h2>
+            <div class="code-block"><pre><code><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI
+<span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel
+
+app = FastAPI()
+
+<span class="comment"># Define data structure</span>
+<span class="keyword">class</span> <span class="function">PromptRequest</span>(BaseModel):
+    prompt: str
+    temperature: float = 0.7
+    max_tokens: int = 150
+
+<span class="comment"># POST endpoint</span>
+<span class="keyword">@app.post</span>(<span class="string">"/chat"</span>)
+<span class="keyword">def</span> <span class="function">chat_completion</span>(request: PromptRequest):
+    <span class="comment"># Process the prompt</span>
+    response = {
+        <span class="string">"prompt"</span>: request.prompt,
+        <span class="string">"settings"</span>: {
+            <span class="string">"temperature"</span>: request.temperature,
+            <span class="string">"max_tokens"</span>: request.max_tokens
+        },
+        <span class="string">"completion"</span>: <span class="string">"This is where LLM response goes"</span>
+    }
+    <span class="keyword">return</span> response</div>
+            <div class="tip-box">
+                <p><strong>💡 Real World:</strong> This is exactly how you'd build a backend for your chatbot!</p>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 19: Putting It All Together -->
+        <div class="slide">
+            <h2>🎯 Putting It All Together</h2>
+            <div class="highlight">
+                <h3>Building a Complete GenAI Pipeline</h3>
+                <div class="code-block" style="margin-top: 15px;"><pre><code><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI
+
+app = FastAPI()
+
+<span class="comment"># Load prompt templates</span>
+<span class="keyword">def</span> <span class="function">load_templates</span>():
+    df = pd.read_csv(<span class="string">'prompt_templates.csv'</span>)
+    <span class="keyword">return</span> df
+
+<span class="comment"># Calculate similarity (NumPy)</span>
+<span class="keyword">def</span> <span class="function">find_best_template</span>(query_embedding, template_embeddings):
+    similarities = np.array([
+        np.dot(query_embedding, t) / (np.linalg.norm(query_embedding) * np.linalg.norm(t))
+        <span class="keyword">for</span> t <span class="keyword">in</span> template_embeddings
+    ])
+    <span class="keyword">return</span> np.argmax(similarities)
+
+<span class="comment"># API endpoint</span>
+<span class="keyword">@app.post</span>(<span class="string">"/find-template"</span>)
+<span class="keyword">def</span> <span class="function">get_template</span>(query: str):
+    <span class="comment"># This is a simplified example showing integration</span>
+    templates = load_templates()
+    <span class="keyword">return</span> {<span class="string">"best_template"</span>: templates.iloc[0][<span class="string">'template'</span>]}</div>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 20: Key Takeaways -->
+        <div class="slide">
+            <h2>🎯 Key Takeaways</h2>
+            <div class="grid-3">
+                <div class="box">
+                    <h4>🐍 Python Basics</h4>
+                    <ul style="font-size: 0.95em;">
+                        <li>Clean, readable syntax</li>
+                        <li>Dynamic typing</li>
+                        <li>Functions & lambdas</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>🔢 NumPy</h4>
+                    <ul style="font-size: 0.95em;">
+                        <li>Fast array operations</li>
+                        <li>Vector math</li>
+                        <li>Essential for embeddings</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>📊 Pandas</h4>
+                    <ul style="font-size: 0.95em;">
+                        <li>DataFrames for data</li>
+                        <li>Easy manipulation</li>
+                        <li>File I/O</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>📈 Matplotlib</h4>
+                    <ul style="font-size: 0.95em;">
+                        <li>Visualize data</li>
+                        <li>Track metrics</li>
+                        <li>Debug models</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>🚀 FastAPI</h4>
+                    <ul style="font-size: 0.95em;">
+                        <li>Build APIs quickly</li>
+                        <li>Serve AI models</li>
+                        <li>Auto documentation</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>🎯 Together</h4>
+                    <ul style="font-size: 0.95em;">
+                        <li>Complete AI stack</li>
+                        <li>Production-ready</li>
+                        <li>Industry standard</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight" style="margin-top: 30px;">
+                <h3>🔥 These aren't just libraries—they're your GenAI toolkit!</h3>
+                <p style="font-size: 1.2em; margin-top: 10px;">Master these, and you can build anything from chatbots to RAG systems to full AI applications.</p>
+            </div>
+        </div>
+
+        <!-- Slide 21: Practice Exercise -->
+        <div class="slide">
+            <h2>💪 Practice Exercise</h2>
+            <div class="warning-box">
+                <h3>Challenge: Build a Prompt Analyzer</h3>
+                <p style="font-size: 1.1em; margin-top: 10px;">Create a Python program that:</p>
+                <ol style="font-size: 1.1em; margin: 15px 0 15px 25px;">
+                    <li>Takes a list of prompts (use Pandas to load from CSV)</li>
+                    <li>Counts tokens in each prompt (use string operations)</li>
+                    <li>Calculates average, min, max tokens (use NumPy)</li>
+                    <li>Creates a bar chart of prompt lengths (use Matplotlib)</li>
+                    <li>Exposes the analysis via FastAPI endpoint</li>
+                </ol>
+            </div>
+            <div class="highlight" style="margin-top: 25px;">
+                <h3>Starter Code Hint:</h3>
+                <div class="code-block"><pre><code><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI
+
+<span class="comment"># Your code here!</span>
+<span class="keyword">def</span> <span class="function">count_tokens</span>(text):
+    <span class="keyword">return</span> <span class="function">len</span>(text.split())
+
+<span class="comment"># Load data</span>
+<span class="comment"># Analyze</span>
+<span class="comment"># Visualize</span>
+<span class="comment"># Create API</span></div>
+            </div></code></pre>
+        </div>
+
+        <!-- Slide 22: Next Steps -->
+        <div class="slide">
+            <h2>📚 Next Steps & Resources</h2>
+            <div class="two-column">
+                <div class="box">
+                    <h4>📖 Learn More</h4>
+                    <ul>
+                        <li><strong>Python:</strong> python.org/docs</li>
+                        <li><strong>NumPy:</strong> numpy.org/doc</li>
+                        <li><strong>Pandas:</strong> pandas.pydata.org</li>
+                        <li><strong>Matplotlib:</strong> matplotlib.org</li>
+                        <li><strong>FastAPI:</strong> fastapi.tiangolo.com</li>
+                    </ul>
+                </div>
+                <div class="box">
+                    <h4>🎯 Practice Platforms</h4>
+                    <ul>
+                        <li>Kaggle (datasets + notebooks)</li>
+                        <li>LeetCode (Python practice)</li>
+                        <li>Google Colab (free notebooks)</li>
+                        <li>GitHub (example projects)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight" style="margin-top: 30px;">
+                <h3>📅 Coming Next Week</h3>
+                <p style="font-size: 1.3em; margin: 15px 0;">
+                    🧠 <strong>Unit 2: Foundations of Large Language Models</strong>
+                </p>
+                <ul style="font-size: 1.2em;">
+                    <li>Transformer Architecture</li>
+                    <li>Attention Mechanisms</li>
+                    <li>GPT, BERT, LLaMA explained</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 23: Q&A -->
+        <div class="slide">
+            <h2>❓ Questions?</h2>
+            <div class="highlight" style="margin-top: 80px; text-align: center; padding: 60px;">
+                <h3 style="font-size: 3em; margin-bottom: 40px;">Let's Discuss!</h3>
+                <p style="font-size: 1.5em;">
+                    Any questions about:
+                </p>
+                <ul style="font-size: 1.3em; text-align: left; max-width: 600px; margin: 30px auto;">
+                    <li>Python syntax or data types?</li>
+                    <li>NumPy or Pandas operations?</li>
+                    <li>Matplotlib visualizations?</li>
+                    <li>FastAPI endpoints?</li>
+                    <li>How these fit into GenAI?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 24: Thank You -->
+        <div class="slide title-slide">
+            <h1>Thank You! 🎉</h1>
+            <p style="font-size: 1.4em; margin-top: 30px;">Practice these fundamentals</p>
+            <p style="font-size: 1.4em;">They're the foundation of everything we'll build!</p>
+            <div style="margin-top: 80px; font-size: 1.2em; opacity: 0.9;">
+                <p>📧 Questions? Reach out anytime!</p>
+                <p style="margin-top: 15px;">💻 Start coding today!</p>
+                <p style="margin-top: 15px;">🚀 See you in the next class!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">24</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn" onclick="changeSlide(-1)">← Previous</button>
+        <button class="nav-button" id="next-btn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+        
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'Home') showSlide(0);
+            if (e.key === 'End') showSlide(totalSlides - 1);
+        });
+        
+        showSlide(0);
+    </script>
+</body>
+</html>
